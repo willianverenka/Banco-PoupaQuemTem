@@ -10,7 +10,7 @@ int listaCliente(struct estadoPrograma state) {
         return -1;
     } else {
         for (int i = 0; i < state.tamanho; ++i) {
-            printf("Cliente %d\n", i);
+            printf("\nCliente %d.\n", i);
             printf("Nome: %s\n", state.memoria[i].nome);
             printf("Tipo de conta: %d\n", state.memoria[i].tipo);
             if (i == state.tamanho - 1) {
@@ -33,7 +33,7 @@ int criarCliente(struct estadoPrograma *state){
     do{
         printf("Digite o cpf do cliente:\n");
         scanf("%ld", &cpf);
-    }while(buscarCliente(cpf) != -1);
+    }while(buscarCliente(*state, cpf) != -1);
     do{
         printf("Digite o tipo de conta do cliente (0 para COMUM, 1 para PLUS)\n");
         scanf("%d", &tipo);
