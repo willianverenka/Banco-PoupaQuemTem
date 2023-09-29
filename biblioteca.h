@@ -28,6 +28,6 @@ struct estadoPrograma{
     struct conta memoria[1000];
     int tamanho;
 };
-
+int listaCliente(struct estadoPrograma state);
 int criarCliente(struct estadoPrograma *state);
 #endif //PROJETO_2_BIBLIOTECA_H
