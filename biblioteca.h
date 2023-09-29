@@ -31,4 +31,6 @@ struct estadoPrograma{
 int listaCliente(struct estadoPrograma state);
 int criarCliente(struct estadoPrograma *state);
 int buscarCliente(struct estadoPrograma state, long cpf);
+void rearranjarArray(struct estadoPrograma *state, int index);
+int deletarCliente(struct estadoPrograma *state, long cpf);
 #endif //PROJETO_2_BIBLIOTECA_H
