@@ -30,5 +30,5 @@ struct estadoPrograma{
 };
 int listaCliente(struct estadoPrograma state);
 int criarCliente(struct estadoPrograma *state);
-int buscarCliente(struct estadoPrograma state, long cpf)
+int buscarCliente(struct estadoPrograma state, long cpf);
 #endif //PROJETO_2_BIBLIOTECA_H
