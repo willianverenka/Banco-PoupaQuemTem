@@ -48,3 +48,12 @@ int criarCliente(struct estadoPrograma *state){
     state->tamanho++;
     return 0;
 }
+
+int buscarCliente(struct estadoPrograma state, long cpf){
+    for(int i = 0; i < state.tamanho; i++){
+        if(state.memoria[i].cpf == cpf){
+            return i;
+        }
+    }
+    return -1;
+}
