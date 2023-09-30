@@ -9,9 +9,8 @@ int listaCliente(struct estadoPrograma state) {
     if (state.tamanho == 0) {
         return -1;
     }
-    else {
         for (int i = 0; i < state.tamanho; ++i) {
-            printf("Cliente %d\n", i);
+            printf("\nCliente %d.\n", i);
             printf("Nome: %s\n", state.memoria[i].nome);
             printf("Tipo de conta: %d\n", state.memoria[i].tipo);
             if (i == state.tamanho - 1) {
@@ -22,7 +21,6 @@ int listaCliente(struct estadoPrograma state) {
             }
         }
     }
-}
 
 int criarCliente(struct estadoPrograma *state){
     char nome[100];
@@ -32,8 +30,10 @@ int criarCliente(struct estadoPrograma *state){
     char senha[300];
     printf("Digite o nome do cliente:\n");
     scanf("%100s", &nome);
-    printf("Digite o cpf do cliente:\n");
-    scanf("%ld", &cpf);
+    do{
+        printf("Digite o cpf do cliente:\n");
+        scanf("%ld", &cpf);
+    }while(buscarCliente(*state, cpf) != -1);
     do{
         printf("Digite o tipo de conta do cliente (0 para COMUM, 1 para PLUS)\n");
         scanf("%d", &tipo);
@@ -52,6 +52,9 @@ int criarCliente(struct estadoPrograma *state){
 }
 
 int buscarCliente(struct estadoPrograma state, long cpf){
+    if(state.tamanho == 0){
+        return -1;
+    }
     for(int i = 0; i < state.tamanho; i++){
         if(state.memoria[i].cpf == cpf){
             return i; // RETORNA POSICAO DO CLIENTE NA LISTA
@@ -79,6 +82,7 @@ int deletarCliente(struct estadoPrograma *state, long cpf){
     }
     return 0;
 }
+
 int debito( float valordeb,struct estadoPrograma*state){
     long CPF;
     printf("Digite o cpf do cliente:\n");
@@ -113,3 +117,4 @@ int debito( float valordeb,struct estadoPrograma*state){
     }
     return 0;
 }
+
