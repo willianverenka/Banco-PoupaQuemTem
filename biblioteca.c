@@ -117,4 +117,3 @@ int debito( float valordeb,struct estadoPrograma*state){
     }
     return 0;
 }
-

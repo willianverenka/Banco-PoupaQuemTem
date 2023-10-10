@@ -15,12 +15,25 @@ enum Loop{
     FECHADO
 };
 
+enum TipoRegistro{
+    DEBITO,
+    DEPOSITO,
+    TRANSFERENCIA,
+};
+
+struct registroMovimentacao{
+    enum TipoRegistro tipo;
+    float valor;
+    float tarifa;
+};
+
 struct conta{
     char nome[100];
     long cpf;
     enum TipoConta tipo;
     float valor;
     char senha[300];
+    struct registroMovimentacao extrato[100];
 };
 
 struct estadoPrograma{
@@ -28,6 +41,7 @@ struct estadoPrograma{
     struct conta memoria[1000];
     int tamanho;
 };
+
 int listaCliente(struct estadoPrograma state);
 int criarCliente(struct estadoPrograma *state);
 int buscarCliente(struct estadoPrograma state, long cpf);
