@@ -34,6 +34,7 @@ struct conta{
     float valor;
     char senha[300];
     struct registroMovimentacao extrato[100];
+    int qtdMovimentacao;
 };
 
 struct estadoPrograma{

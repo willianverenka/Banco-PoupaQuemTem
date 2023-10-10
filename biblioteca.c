@@ -46,6 +46,7 @@ int criarCliente(struct estadoPrograma *state){
     state->memoria[state->tamanho].cpf = cpf;
     state->memoria[state->tamanho].tipo = tipo;
     state->memoria[state->tamanho].valor = valorInicial;
+    state->memoria[state->tamanho].qtdMovimentacao = 0;
     strcpy(state->memoria[state->tamanho].senha, senha);
     state->tamanho++;
     return 0;
@@ -115,5 +116,24 @@ int debito( float valordeb,struct estadoPrograma*state){
             printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valordeb,totdeb);
         }
     }
+    return 0;
+}
+
+int adicionarExtrato(struct estadoPrograma *state, int posicaoCliente, enum TipoRegistro tipo, float valor, float tarifa){
+    int qtdExtratoCliente = state->memoria[posicaoCliente].qtdMovimentacao;
+    if(qtdExtratoCliente >= 99){
+        /*/ a ideia eh mostrar só os últimos 100
+         * portanto, qnd chegar no 99 deve apagar o primeiro, mandar todos pra esquerda
+         * apagar esse return -1 qnd implementar
+        /*/
+        printf("Sem espaco suficiente!!\n");
+        return -1;
+    }
+    struct registroMovimentacao novoRegistro;
+    novoRegistro.tipo = tipo;
+    novoRegistro.valor = valor;
+    novoRegistro.tarifa = tarifa;
+    state->memoria[posicaoCliente].extrato[qtdExtratoCliente] = novoRegistro;
+    state->memoria[posicaoCliente].qtdMovimentacao++;
     return 0;
 }
