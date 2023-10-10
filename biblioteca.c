@@ -95,7 +95,6 @@ int debito( float valordeb,struct estadoPrograma*state){
         char senha[300];
         printf("Digite a senha da conta:\n");
         scanf("%300s", &senha);
-        printf("A senha eh %s\n",state->memoria[pos].senha);
         if(strcmp(senha,state->memoria[pos].senha)!=0){
             return -1;
         }
@@ -116,5 +115,21 @@ int debito( float valordeb,struct estadoPrograma*state){
         }
     }
     return 0;
+}
+int deposito(struct estadoPrograma*state){
+    long CPF;
+    printf("Digite o cpf do cliente:\n");
+    scanf("%ld", &CPF);
+    int pos=buscarCliente(*state,CPF);
+    if(pos==-1){
+        return -1;
+    }
+    else{
+        float valdep;
+        printf("Digite o valor a ser depositado:\n");
+        scanf("%f",&valdep);
+        state->memoria[pos].valor=state->memoria[pos].valor+valdep;
+        printf("O novo valor da sua conta eh R$%.2f",state->memoria[pos].valor);
+    }
 }
 
