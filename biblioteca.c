@@ -137,3 +137,33 @@ int adicionarExtrato(struct estadoPrograma *state, int posicaoCliente, enum Tipo
     state->memoria[posicaoCliente].qtdMovimentacao++;
     return 0;
 }
+
+int lerExtrato(struct estadoPrograma state, long cpf){
+    int pos = buscarCliente(state, cpf);
+    if(pos == -1)
+        return -1; // cpf nao encontrado
+    char senha[300];
+    printf("Digite uma senha:\n");
+    scanf("%299s", &senha);
+    if(strcmp(state.memoria[pos].senha, senha) != 0){
+        return -1;
+    }
+    int qtdExtrato = state.memoria[pos].qtdMovimentacao;
+    for(int i = qtdExtrato, j = 1; i >= 0; i--, j++){
+        printf("\n%d.\n", j);
+        switch(state.memoria[pos].extrato[i].tipo){
+            case DEBITO:
+                printf("Tipo: Debito\n");
+                break;
+            case TRANSFERENCIA:
+                printf("Tipo: Transferencia\n");
+                break;
+            default:
+                printf("Tipo: Deposito\n");
+                break;
+        }
+        printf("Valor: %f\n", state.memoria[pos].extrato[i].valor);
+        printf("Tarifa: %f\n", state.memoria[pos].extrato[i].tarifa);
+    }
+    return 0;
+}
