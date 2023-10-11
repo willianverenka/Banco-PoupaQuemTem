@@ -43,6 +43,7 @@ struct estadoPrograma{
     int tamanho;
 };
 
+void rearranjarArrayExtrato(struct conta *usuario)
 int listaCliente(struct estadoPrograma state);
 int criarCliente(struct estadoPrograma *state);
 int buscarCliente(struct estadoPrograma state, long cpf);

@@ -119,20 +119,32 @@ int debito( float valordeb,struct estadoPrograma*state){
     return 0;
 }
 
+void rearranjarArrayExtrato(struct conta *usuario){
+    if(usuario->qtdMovimentacao == 0)
+        return;
+    for(int i = usuario->qtdMovimentacao-1; i > 0; i--){
+        usuario->extrato[i] = usuario->extrato[i-1];
+    }
+}
+
 int adicionarExtrato(struct estadoPrograma *state, int posicaoCliente, enum TipoRegistro tipo, float valor, float tarifa){
     int qtdExtratoCliente = state->memoria[posicaoCliente].qtdMovimentacao;
-    if(qtdExtratoCliente >= 99){
-        /*/ a ideia eh mostrar só os últimos 100
-         * portanto, qnd chegar no 99 deve apagar o primeiro, mandar todos pra esquerda
-         * apagar esse return -1 qnd implementar
-        /*/
-        printf("Sem espaco suficiente!!\n");
-        return -1;
-    }
     struct registroMovimentacao novoRegistro;
     novoRegistro.tipo = tipo;
     novoRegistro.valor = valor;
     novoRegistro.tarifa = tarifa;
+    if(qtdExtratoCliente >= 99){
+        /*/
+         * se tiverem 99 operacoes na conta, a array passa todos elementos pra esquerda
+         * ex: [a, b, c, d] -> [b, c, d, d]
+         * no final, o primeiro termo (mais antigo) eh apagado, e o ultimo, apesar de ser repetido,
+         * sera substituido pelo novo registro
+         * dessa forma, os 100 ultimos registros serao mostrados
+         * ps: a leitura do extrato e de tras pra frente, dos mais recentes pros mais velhos.
+         * /*/
+        rearranjarArrayExtrato(state->memoria[posicaoCliente]);
+        state->memoria[posicaoCliente].extrato[qtdExtratoCliente] = novoRegistro;
+    }
     state->memoria[posicaoCliente].extrato[qtdExtratoCliente] = novoRegistro;
     state->memoria[posicaoCliente].qtdMovimentacao++;
     return 0;
