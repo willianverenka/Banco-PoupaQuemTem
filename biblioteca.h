@@ -50,6 +50,8 @@ int buscarCliente(struct estadoPrograma *state, long cpf);
 void rearranjarArray(struct estadoPrograma *state, int index);
 int deletarCliente(struct estadoPrograma *state, long cpf);
 int debito( float valordeb,struct estadoPrograma*state);
+int deposito(struct estadoPrograma*state);
+int transferencia(struct estadoPrograma*state);
 int lerExtrato(struct estadoPrograma *state, long cpf);
 int adicionarExtrato(struct estadoPrograma *state, int posicaoCliente, enum TipoRegistro tipo, float valor, float tarifa);
 #endif //PROJETO_2_BIBLIOTECA_H
