@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
+
 int listaCliente(struct estadoPrograma state) {
     if (state.tamanho == 0) {
         return -1;
@@ -22,18 +23,32 @@ int listaCliente(struct estadoPrograma state) {
         }
     }
 
+
+int buscarCliente(struct estadoPrograma *state, long cpf){
+    if(state->tamanho == 0){
+        return -1;
+    }
+    for(int i = 0; i < state->tamanho; i++){
+        if(state->memoria[i].cpf == cpf){
+            return i; // RETORNA POSICAO DO CLIENTE NA LISTA
+        }
+    }
+    return -1; // CPF NAO ENCONTRADO
+}
+
 int criarCliente(struct estadoPrograma *state){
+    printf("dentro cliente\n");
     char nome[100];
     long cpf;
     enum TipoConta tipo;
     float valorInicial;
     char senha[300];
     printf("Digite o nome do cliente:\n");
-    scanf("%100s", &nome);
+    scanf("%100s", nome);
     do{
         printf("Digite o cpf do cliente:\n");
         scanf("%ld", &cpf);
-    }while(buscarCliente(*state, cpf) != -1);
+    }while(buscarCliente(state, cpf) != -1);
     do{
         printf("Digite o tipo de conta do cliente (0 para COMUM, 1 para PLUS)\n");
         scanf("%d", &tipo);
@@ -41,26 +56,15 @@ int criarCliente(struct estadoPrograma *state){
     printf("Digite o valor inicial da conta:\n");
     scanf("%f", &valorInicial);
     printf("Digite a senha da conta:\n");
-    scanf("%300s", &senha);
+    scanf("%300s", senha);
     strcpy(state->memoria[state->tamanho].nome, nome);
     state->memoria[state->tamanho].cpf = cpf;
     state->memoria[state->tamanho].tipo = tipo;
     state->memoria[state->tamanho].valor = valorInicial;
+    state->memoria[state->tamanho].qtdMovimentacao = 0;
     strcpy(state->memoria[state->tamanho].senha, senha);
     state->tamanho++;
     return 0;
-}
-
-int buscarCliente(struct estadoPrograma state, long cpf){
-    if(state.tamanho == 0){
-        return -1;
-    }
-    for(int i = 0; i < state.tamanho; i++){
-        if(state.memoria[i].cpf == cpf){
-            return i; // RETORNA POSICAO DO CLIENTE NA LISTA
-        }
-    }
-    return -1; // CPF NAO ENCONTRADO
 }
 
 void rearranjarArray(struct estadoPrograma *state, int index){ // utilitario pra ordenar a array 
@@ -70,7 +74,7 @@ void rearranjarArray(struct estadoPrograma *state, int index){ // utilitario pra
 }
 
 int deletarCliente(struct estadoPrograma *state, long cpf){
-    int posicao = buscarCliente(*state, cpf);
+    int posicao = buscarCliente(state, cpf);
     if(posicao == -1){
         return -1;
     }
@@ -87,14 +91,14 @@ int debito( float valordeb,struct estadoPrograma*state){
     long CPF;
     printf("Digite o cpf do cliente:\n");
     scanf("%ld", &CPF);
-    int pos=buscarCliente(*state,CPF);
+    int pos=buscarCliente(state,CPF);
     if (pos==-1){
         return -1;
     }
     else{
         char senha[300];
         printf("Digite a senha da conta:\n");
-        scanf("%300s", &senha);
+        scanf("%300s", senha);
         if(strcmp(senha,state->memoria[pos].senha)!=0){
             return -1;
         }
@@ -105,7 +109,8 @@ int debito( float valordeb,struct estadoPrograma*state){
                 }
             else{
                 state->memoria[pos].valor=totdeb;
-                printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valordeb,state->memoria[pos].valor);
+                printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f\n",valordeb,totdeb);
+                adicionarExtrato(state, pos, DEBITO, totdeb, 0.03*valordeb);
             }
         }
         else{
@@ -115,12 +120,14 @@ int debito( float valordeb,struct estadoPrograma*state){
                 }
             else{
                 state->memoria[pos].valor=totdeb;
-                printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valordeb,state->memoria[pos].valor);
+                printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f\n",valordeb,totdeb);
+                adicionarExtrato(state, pos, DEBITO, totdeb, 0.05*valordeb);
             }
         }
     }
     return 0;
 }
+
 int deposito(struct estadoPrograma*state){
     long CPF;
     printf("Digite o cpf do cliente:\n");
@@ -192,3 +199,67 @@ int transferencia(struct estadoPrograma*state){
         }
     }
 }
+=======
+
+void rearranjarArrayExtrato(struct conta *usuario){
+    if(usuario->qtdMovimentacao == 0)
+        return;
+    for(int i = usuario->qtdMovimentacao-1; i > 0; i--){
+        usuario->extrato[i] = usuario->extrato[i-1];
+    }
+}
+
+int adicionarExtrato(struct estadoPrograma *state, int posicaoCliente, enum TipoRegistro tipo, float valor, float tarifa){
+    int qtdExtratoCliente = state->memoria[posicaoCliente].qtdMovimentacao;
+    printf("qtd de movimentacoes inicial: %d\n", qtdExtratoCliente);
+    struct registroMovimentacao novoRegistro;
+    novoRegistro.tipo = tipo;
+    novoRegistro.valor = valor;
+    novoRegistro.tarifa = tarifa;
+    if(qtdExtratoCliente >= 99){
+/*
+         * se tiverem 99 operacoes na conta, a array passa todos elementos pra esquerda
+         * ex: [a, b, c, d] -> [b, c, d, d]
+         * no final, o primeiro termo (mais antigo) eh apagado, e o ultimo, apesar de ser repetido,
+         * sera substituido pelo novo registro
+         * dessa forma, os 100 ultimos registros serao mostrados
+         * ps: a leitura do extrato e de tras pra frente, dos mais recentes pros mais velhos.
+         */
+        rearranjarArrayExtrato(&state->memoria[posicaoCliente]);
+        state->memoria[posicaoCliente].extrato[qtdExtratoCliente] = novoRegistro;
+    }
+    state->memoria[posicaoCliente].extrato[qtdExtratoCliente] = novoRegistro;
+    state->memoria[posicaoCliente].qtdMovimentacao++;
+    return 0;
+}
+
+int lerExtrato(struct estadoPrograma *state, long cpf){
+    int pos = buscarCliente(state, cpf);
+    if(pos == -1)
+        return -1; // cpf nao encontrado
+    char senha[300];
+    printf("Digite uma senha:\n");
+    scanf("%299s", &senha);
+    if(strcmp(state->memoria[pos].senha, senha) != 0){
+        return -1;
+    }
+    int qtdExtrato = state->memoria[pos].qtdMovimentacao;
+    for(int i = qtdExtrato-1, j = 1; i >= 0; i--, j++){
+        printf("\n%d.\n", j);
+        switch(state->memoria[pos].extrato[i].tipo){
+            case DEBITO:
+                printf("Tipo: Debito\n");
+                break;
+            case TRANSFERENCIA:
+                printf("Tipo: Transferencia\n");
+                break;
+            default:
+                printf("Tipo: Deposito\n");
+                break;
+        }
+        printf("Valor: R$%.2f\n", state->memoria[pos].extrato[i].valor);
+        printf("Tarifa: R$%.3f\n", state->memoria[pos].extrato[i].tarifa);
+    }
+    return 0;
+}
+
