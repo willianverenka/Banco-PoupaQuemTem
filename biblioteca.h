@@ -44,7 +44,7 @@ struct estadoPrograma{
 };
 
 void rearranjarArrayExtrato(struct conta *usuario);
-int listaCliente(struct estadoPrograma state);
+int listaCliente(struct estadoPrograma *state);
 int criarCliente(struct estadoPrograma *state);
 int buscarCliente(struct estadoPrograma *state, long cpf);
 void rearranjarArray(struct estadoPrograma *state, int index);

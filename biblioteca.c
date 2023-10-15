@@ -6,21 +6,22 @@
 #include <string.h>
 
 
-int listaCliente(struct estadoPrograma state) {
-    if (state.tamanho == 0) {
+int listaCliente(struct estadoPrograma *state) {
+    if (state->tamanho == 0) {
         return -1;
     }
-        for (int i = 0; i < state.tamanho; ++i) {
+        for (int i = 0; i < state->tamanho; ++i) {
             printf("\nCliente %d.\n", i);
-            printf("Nome: %s\n", state.memoria[i].nome);
-            printf("Tipo de conta: %d\n", state.memoria[i].tipo);
-            if (i == state.tamanho - 1) {
-                printf("CPF: %ld", state.memoria[i].cpf);
+            printf("Nome: %s\n", state->memoria[i].nome);
+            printf("Tipo de conta: %d\n", state->memoria[i].tipo);
+            if (i == state->tamanho - 1) {
+                printf("CPF: %ld", state->memoria[i].cpf);
             }
             else {
-                printf("CPF: %ld\n", state.memoria[i].cpf);
+                printf("CPF: %ld\n", state->memoria[i].cpf);
             }
         }
+        return 0;
     }
 
 
@@ -82,12 +83,12 @@ int deletarCliente(struct estadoPrograma *state, long cpf){
         state->tamanho--;
     }
     else{
-        rearranjarArray(&state, posicao);
+        rearranjarArray(state, posicao);
     }
     return 0;
 }
 
-int debito( float valordeb,struct estadoPrograma*state){
+int debito(float valordeb,struct estadoPrograma*state){
     long CPF;
     printf("Digite o cpf do cliente:\n");
     scanf("%ld", &CPF);
@@ -132,7 +133,7 @@ int deposito(struct estadoPrograma*state){
     long CPF;
     printf("Digite o cpf do cliente:\n");
     scanf("%ld", &CPF);
-    int pos=buscarCliente(*state,CPF);
+    int pos=buscarCliente(state,CPF);
     if(pos==-1){
         return -1;
     }
@@ -148,14 +149,14 @@ int transferencia(struct estadoPrograma*state){
     long CPF;
     printf("Digite o cpf do cliente que irah transferir o dinheiro:\n");
     scanf("%ld", &CPF);
-    int pos=buscarCliente(*state,CPF);
+    int pos=buscarCliente(state,CPF);
     if (pos==-1){
         return -1;
     }
     else {
         char senha[300];
         printf("Digite a senha da conta:\n");
-        scanf("%300s", &senha);
+        scanf("%300s", senha);
         if (strcmp(senha, state->memoria[pos].senha) != 0) {
             return -1;
         }
@@ -163,7 +164,7 @@ int transferencia(struct estadoPrograma*state){
             long CPF2;
             printf("Digite o cpf do cliente que irah receber o dinheiro:\n");
             scanf("%ld", &CPF2);
-            int pos2=buscarCliente(*state,CPF2);
+            int pos2=buscarCliente(state,CPF2);
             if(pos2==-1 && pos2!=pos){
                 return -1;
             }
@@ -184,7 +185,7 @@ int transferencia(struct estadoPrograma*state){
                     }
                 }
                 else{
-                    float totdeb=state->memoria[pos].valor-1.05*valtrans;
+                    float totdeb = state->memoria[pos].valor-1.05*valtrans;
                     if(totdeb<=-1000){
                         return -1;
                     }
@@ -199,7 +200,6 @@ int transferencia(struct estadoPrograma*state){
         }
     }
 }
-=======
 
 void rearranjarArrayExtrato(struct conta *usuario){
     if(usuario->qtdMovimentacao == 0)
