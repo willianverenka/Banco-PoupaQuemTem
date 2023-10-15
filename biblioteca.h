@@ -54,4 +54,5 @@ int deposito(struct estadoPrograma*state);
 int transferencia(struct estadoPrograma*state);
 int lerExtrato(struct estadoPrograma *state, long cpf);
 int adicionarExtrato(struct estadoPrograma *state, int posicaoCliente, enum TipoRegistro tipo, float valor, float tarifa);
+void esperarSaida();
 #endif //PROJETO_2_BIBLIOTECA_H

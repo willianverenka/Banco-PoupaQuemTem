@@ -11,15 +11,12 @@ int listaCliente(struct estadoPrograma *state) {
         return -1;
     }
         for (int i = 0; i < state->tamanho; ++i) {
-            printf("\nCliente %d.\n", i);
+            printf("\nCliente %d.\n", i+1);
             printf("Nome: %s\n", state->memoria[i].nome);
-            printf("Tipo de conta: %d\n", state->memoria[i].tipo);
-            if (i == state->tamanho - 1) {
-                printf("CPF: %ld", state->memoria[i].cpf);
-            }
-            else {
-                printf("CPF: %ld\n", state->memoria[i].cpf);
-            }
+            char *tipo;
+            tipo = (state->memoria[i].tipo == 0) ? "Comum" : "Plus";
+            printf("Tipo de conta: %s\n", tipo);
+            printf("CPF: %ld\n", state->memoria[i].cpf);
         }
         return 0;
     }
@@ -38,7 +35,9 @@ int buscarCliente(struct estadoPrograma *state, long cpf){
 }
 
 int criarCliente(struct estadoPrograma *state){
-    printf("dentro cliente\n");
+    if(state->tamanho >= 1000){
+        return -1;
+    }
     char nome[100];
     long cpf;
     enum TipoConta tipo;
@@ -77,6 +76,7 @@ void rearranjarArray(struct estadoPrograma *state, int index){ // utilitario pra
 int deletarCliente(struct estadoPrograma *state, long cpf){
     int posicao = buscarCliente(state, cpf);
     if(posicao == -1){
+        printf("DEU ERRO!\n");
         return -1;
     }
     if(posicao == state->tamanho-1){
@@ -137,13 +137,11 @@ int deposito(struct estadoPrograma*state){
     if(pos==-1){
         return -1;
     }
-    else{
-        float valdep;
-        printf("Digite o valor a ser depositado:\n");
-        scanf("%f",&valdep);
-        state->memoria[pos].valor=state->memoria[pos].valor+valdep;
-        printf("O novo valor da sua conta eh R$%.2f",state->memoria[pos].valor);
-    }
+    float valdep;
+    printf("Digite o valor a ser depositado:\n");
+    scanf("%f",&valdep);
+    state->memoria[pos].valor=state->memoria[pos].valor+valdep;
+    printf("O novo valor da sua conta eh R$%.2f",state->memoria[pos].valor);
 }
 int transferencia(struct estadoPrograma*state){
     long CPF;
@@ -263,3 +261,7 @@ int lerExtrato(struct estadoPrograma *state, long cpf){
     return 0;
 }
 
+void esperarSaida(){
+    printf("Pressione qualquer tecla para sair...");
+    getchar();
+}
