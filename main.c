@@ -24,7 +24,7 @@ int main() {
                 break;
             case '1':
                 if(criarCliente(&state) == -1){
-                    printf("ERRO: ja existem 1000 clientes registrados\n");
+                    printf("ERRO: ja existem 1000 clientes registrados.\n");
                 }
                 while ((getchar()) != '\n');
                 esperarSaida();
@@ -51,10 +51,17 @@ int main() {
                 esperarSaida();
                 break;
             case '4':
-                // debito();
+                if(debito(&state) == -1){
+                    printf("ERRO: CPF ou senha invalidos.\n");
+                }
+                while ((getchar()) != '\n');
+                esperarSaida();
                 break;
             case '5':
-                deposito(&state);
+                if(deposito(&state) == -1){
+                    printf("ERRO: CPF ou senha invalidos.\n");
+                }
+                while ((getchar()) != '\n');
                 break;
             case '6':
                 printf("Digite o CPF do cliente a ser consultado:\n");
@@ -69,7 +76,11 @@ int main() {
                 }
                     break;
                 case '7':
-                    transferencia(&state);
+                    if(transferencia(&state) == -1){
+                        printf("ERRO: CPF ou senha invalidos.\n");
+                    }
+                    while ((getchar()) != '\n');
+                    esperarSaida();
                     break;
                 default:
                     printf("Insira uma entrada valida (0-7)\n");
