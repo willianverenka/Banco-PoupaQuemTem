@@ -48,7 +48,7 @@ int criarCliente(struct estadoPrograma *state){
     do{
         printf("Digite o cpf do cliente:\n");
         scanf("%ld", &cpf);
-    }while(buscarCliente(state, cpf) != -1);
+    }while(buscarCliente(state, cpf) != ERRO_CPF);
     do{
         printf("Digite o tipo de conta do cliente (0 para COMUM, 1 para PLUS)\n");
         scanf("%d", &tipo);
@@ -154,52 +154,41 @@ int transferencia(struct estadoPrograma*state){
     if (pos==-1){
         return ERRO_CPF;
     }
-    else {
-        char senha[300];
-        printf("Digite a senha da conta:\n");
-        scanf("%300s", senha);
-        if (strcmp(senha, state->memoria[pos].senha) != 0) {
-            return ERRO_SENHA;
-        }
-        else{
-            long CPF2;
-            printf("Digite o cpf do cliente que irah receber o dinheiro:\n");
-            scanf("%ld", &CPF2);
-            int pos2=buscarCliente(state,CPF2);
-            if(pos2==-1 && pos2!=pos){
-                return OPERACAO_INVALIDA;
-            }
-            else{
-                float valtrans;
-                printf("Digite o valor a ser tranferido: \n");
-                scanf("%f",&valtrans);
-                if(state->memoria[pos].tipo==1){
-                    float totdeb=state->memoria[pos].valor-1.03*valtrans;
-                    if(totdeb<=-5000){
-                        return OPERACAO_INVALIDA;
-                    }
-                    else{
-                        state->memoria[pos].valor=totdeb;
-                        state->memoria[pos2].valor=valtrans;
-                        printf("O valor da conta do receptor é R$%.2f",state->memoria[pos2].valor);
-                        printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valtrans,state->memoria[pos].valor=totdeb);
-                    }
-                }
-                else{
-                    float totdeb = state->memoria[pos].valor-1.05*valtrans;
-                    if(totdeb<=-1000){
-                        return OPERACAO_INVALIDA;
-                    }
-                    else{
-                        state->memoria[pos].valor=totdeb;
-                        state->memoria[pos2].valor=valtrans;
-                        printf("O valor da conta do receptor eh R$%.2f\n",state->memoria[pos2].valor);
-                        printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valtrans,state->memoria[pos].valor=totdeb);
-                    }
-                }
-            }
-        }
+    char senha[300];
+    printf("Digite a senha da conta:\n");
+    scanf("%300s", senha);
+    if (strcmp(senha, state->memoria[pos].senha) != 0) {
+        return ERRO_SENHA;
     }
+    long CPF2;
+    printf("Digite o cpf do cliente que irah receber o dinheiro:\n");
+    scanf("%ld", &CPF2);
+    int pos2=buscarCliente(state,CPF2);
+    if(pos2==-1 || pos2 == pos)
+        return ERRO_CPF;
+    float valtrans;
+    printf("Digite o valor a ser tranferido: \n");
+    scanf("%f",&valtrans);
+    if(state->memoria[pos].tipo==1){
+        float totdeb=state->memoria[pos].valor-1.03*valtrans;
+        if(totdeb<=-5000){
+            return OPERACAO_INVALIDA;
+        }
+        state->memoria[pos].valor=totdeb;
+        state->memoria[pos2].valor=valtrans;
+        printf("O valor da conta do receptor é R$%.2f",state->memoria[pos2].valor);
+        printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valtrans,state->memoria[pos].valor=totdeb);
+    }
+    else{
+        float totdeb = state->memoria[pos].valor-1.05*valtrans;
+        if(totdeb<=-1000){
+            return OPERACAO_INVALIDA;
+        }
+        state->memoria[pos].valor=totdeb;
+        state->memoria[pos2].valor=valtrans;
+        printf("O valor da conta do receptor eh R$%.2f\n",state->memoria[pos2].valor);
+        printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valtrans,state->memoria[pos].valor=totdeb);
+        }
     return SUCESSO;
 }
 
