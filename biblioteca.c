@@ -88,7 +88,7 @@ int deletarCliente(struct estadoPrograma *state, long cpf){
     return 0;
 }
 
-int debito(float valordeb,struct estadoPrograma*state){
+int debito(struct estadoPrograma*state){
     long CPF;
     printf("Digite o cpf do cliente:\n");
     scanf("%ld", &CPF);
@@ -97,12 +97,15 @@ int debito(float valordeb,struct estadoPrograma*state){
         return -1;
     }
     else{
+        float valordeb;
         char senha[300];
         printf("Digite a senha da conta:\n");
         scanf("%300s", senha);
         if(strcmp(senha,state->memoria[pos].senha)!=0){
             return -1;
         }
+        printf("Digite o valor a ser debitado:\n");
+        scanf("%f", &valordeb);
         if(state->memoria[pos].tipo==1){
             float totdeb=state->memoria[pos].valor-1.03*valordeb;
             if(totdeb<=-5000){
