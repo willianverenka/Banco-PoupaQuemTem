@@ -23,7 +23,7 @@ int main() {
                 state.estadoLoop = FECHADO;
                 break;
             case '1':
-                if(criarCliente(&state) == -1){
+                if(criarCliente(&state) == ERRO_LISTA_CHEIA){
                     printf("ERRO: ja existem 1000 clientes registrados.\n");
                 }
                 while ((getchar()) != '\n');
@@ -45,20 +45,28 @@ int main() {
                 esperarSaida();
                 break;
             case '3':
-                if(listaCliente(&state) == - 1){
+                if(listaCliente(&state) == ERRO_LISTA_VAZIA){
                     printf("Nenhum cliente registrado.\n");
                 }
                 esperarSaida();
                 break;
             case '4':
-                if(debito(&state) == -1){
-                    printf("ERRO: CPF ou senha invalidos.\n");
+                switch(debito(&state)){
+                    case ERRO_SENHA:
+                        printf("ERRO: Senha invalida.\n");
+                        break;
+                    case ERRO_CPF:
+                        printf("ERRO: CPF invalido.\n");
+                        break;
+                    case OPERACAO_INVALIDA:
+                        printf("ERRO: Operacao invalida.\n");
+                        break;
                 }
                 while ((getchar()) != '\n');
                 esperarSaida();
                 break;
             case '5':
-                if(deposito(&state) == -1){
+                if(deposito(&state) == ERRO_CPF){
                     printf("ERRO: CPF ou senha invalidos.\n");
                 }
                 while ((getchar()) != '\n');
@@ -68,16 +76,26 @@ int main() {
                 long input3;
                 scanf("%ld", &input3);
                 while ((getchar()) != '\n');
-                while(lerExtrato(&state, input3) == -1){
-                    printf("CPF invalido.\n");
-                    printf("Digite o CPF do cliente a ser consultado:\n");
-                    scanf("%ld", &input3);
-                    while ((getchar()) != '\n');
+                switch(lerExtrato(&state, input3)){
+                    case ERRO_SENHA:
+                        printf("ERRO: Senha invalida.\n");
+                        break;
+                    case ERRO_CPF:
+                        printf("ERRO: CPF invalido.\n");
+                        break;
+                    case OPERACAO_INVALIDA:
+                        printf("ERRO: Operacao invalida.\n");
+                        break;
                 }
                     break;
                 case '7':
-                    if(transferencia(&state) == -1){
-                        printf("ERRO: CPF ou senha invalidos.\n");
+                    switch(transferencia(&state)){
+                        case ERRO_SENHA:
+                            printf("ERRO: Senha invalida.\n");
+                            break;
+                        case ERRO_CPF:
+                            printf("ERRO: CPF invalido.\n");
+                            break;
                     }
                     while ((getchar()) != '\n');
                     esperarSaida();
@@ -87,5 +105,5 @@ int main() {
                     break;
             }
     }while(state.estadoLoop == FUNCIONANDO);
-    return 0;
+    return SUCESSO;
 }
