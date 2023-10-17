@@ -5,6 +5,15 @@
 #ifndef PROJETO_2_BIBLIOTECA_H
 #define PROJETO_2_BIBLIOTECA_H
 
+enum Respostas{
+    SUCESSO = 0,
+    ERRO_CPF = -1,
+    ERRO_SENHA = -2,
+    ERRO_LISTA_VAZIA = -3,
+    ERRO_LISTA_CHEIA = -4,
+    OPERACAO_INVALIDA = -5 //debito/transferencias impossiveis
+};
+
 enum TipoConta{
     COMUM,
     PLUS
