@@ -45,10 +45,14 @@ int criarCliente(struct estadoPrograma *state){
     char senha[300];
     printf("Digite o nome do cliente:\n");
     scanf("%100s", nome);
-    do{
+    printf("Digite o cpf do cliente:\n");
+    scanf("%ld", &cpf);
+    while(buscarCliente(state, cpf) == ERRO_CPF){
+        printf("O cpf ja existe.\n");
         printf("Digite o cpf do cliente:\n");
         scanf("%ld", &cpf);
-    }while(buscarCliente(state, cpf) != ERRO_CPF);
+        printf("CPF EH %ld", cpf);
+    }
     do{
         printf("Digite o tipo de conta do cliente (0 para COMUM, 1 para PLUS)\n");
         scanf("%d", &tipo);
@@ -83,6 +87,7 @@ int deletarCliente(struct estadoPrograma *state, long cpf){
     }
     else{
         rearranjarArray(state, posicao);
+        --state->tamanho;
     }
     return SUCESSO;
 }
@@ -110,22 +115,18 @@ int debito(struct estadoPrograma*state){
             if(totdeb<=-5000){
                 return OPERACAO_INVALIDA;
                 }
-            else{
-                state->memoria[pos].valor=totdeb;
-                printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f\n",valordeb,totdeb);
-                adicionarExtrato(state, pos, DEBITO, totdeb, 0.03*valordeb);
-            }
+            state->memoria[pos].valor=totdeb;
+            printf("Depois do debito de R$%.2f, sua conta tem R$%.2f\n",valordeb,totdeb);
+            adicionarExtrato(state, pos, DEBITO, (valordeb * 1.03) * -1, valordeb*0.03);
         }
         else{
             float totdeb=state->memoria[pos].valor-1.05*valordeb;
             if(totdeb<=-1000){
                 return OPERACAO_INVALIDA;
                 }
-            else{
-                state->memoria[pos].valor=totdeb;
-                printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f\n",valordeb,totdeb);
-                adicionarExtrato(state, pos, DEBITO, totdeb, 0.05*valordeb);
-            }
+            state->memoria[pos].valor=totdeb;
+            printf("Depois do debito de R$%.2f, sua conta tem R$%.2f\n",valordeb,totdeb);
+            adicionarExtrato(state, pos, DEBITO, (valordeb * 1.05) * -1, valordeb*0.05);
         }
     }
     return SUCESSO;
@@ -144,6 +145,7 @@ int deposito(struct estadoPrograma*state){
     scanf("%f",&valdep);
     state->memoria[pos].valor=state->memoria[pos].valor+valdep;
     printf("O novo valor da sua conta eh R$%.2f",state->memoria[pos].valor);
+    adicionarExtrato(state, pos, DEPOSITO, valdep, 0);
     return SUCESSO;
 }
 int transferencia(struct estadoPrograma*state){
@@ -178,6 +180,8 @@ int transferencia(struct estadoPrograma*state){
         state->memoria[pos2].valor=valtrans;
         printf("O valor da conta do receptor é R$%.2f",state->memoria[pos2].valor);
         printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valtrans,state->memoria[pos].valor=totdeb);
+        adicionarExtrato(state, pos, TRANSFERENCIA, (valtrans*1.03) * -1, valtrans*0.03);
+        adicionarExtrato(state, pos2, TRANSFERENCIA, valtrans, 0);
     }
     else{
         float totdeb = state->memoria[pos].valor-1.05*valtrans;
@@ -188,6 +192,8 @@ int transferencia(struct estadoPrograma*state){
         state->memoria[pos2].valor=valtrans;
         printf("O valor da conta do receptor eh R$%.2f\n",state->memoria[pos2].valor);
         printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valtrans,state->memoria[pos].valor=totdeb);
+        adicionarExtrato(state, pos, TRANSFERENCIA, (valtrans*1.05) * -1, valtrans*0.05);
+        adicionarExtrato(state, pos2, TRANSFERENCIA, valtrans, 0);
         }
     return SUCESSO;
 }
@@ -251,7 +257,7 @@ int lerExtrato(struct estadoPrograma *state, long cpf){
                 break;
         }
         printf("Valor: R$%.2f\n", state->memoria[pos].extrato[i].valor);
-        printf("Tarifa: R$%.3f\n", state->memoria[pos].extrato[i].tarifa);
+        printf("Tarifa: R$%.2f\n", state->memoria[pos].extrato[i].tarifa);
     }
     return SUCESSO;
 }

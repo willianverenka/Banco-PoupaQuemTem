@@ -15,7 +15,7 @@ int main() {
         printf("0. Sair\n");
         char input;
         scanf(" %c", &input);
-        printf("input eh %c\n", input);
+        printf("tamanho eh %d\n", state.tamanho);
         while ((getchar()) != '\n');
         switch(input){
             case '0':
@@ -87,6 +87,8 @@ int main() {
                         printf("ERRO: Operacao invalida.\n");
                         break;
                 }
+                    while ((getchar()) != '\n');
+                    esperarSaida();
                     break;
                 case '7':
                     switch(transferencia(&state)){
