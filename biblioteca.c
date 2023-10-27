@@ -47,11 +47,12 @@ int criarCliente(struct estadoPrograma *state){
     scanf("%100s", nome);
     printf("Digite o cpf do cliente:\n");
     scanf("%ld", &cpf);
-    while(buscarCliente(state, cpf) == ERRO_CPF){
+    while ((getchar()) != '\n');
+    while(buscarCliente(state, cpf) != ERRO_CPF && buscarCliente(state, cpf) != ERRO_LISTA_VAZIA){
         printf("O cpf ja existe.\n");
         printf("Digite o cpf do cliente:\n");
         scanf("%ld", &cpf);
-        printf("CPF EH %ld", cpf);
+        while ((getchar()) != '\n');
     }
     do{
         printf("Digite o tipo de conta do cliente (0 para COMUM, 1 para PLUS)\n");
@@ -163,7 +164,7 @@ int transferencia(struct estadoPrograma*state){
         return ERRO_SENHA;
     }
     long CPF2;
-    printf("Digite o cpf do cliente que irah receber o dinheiro:\n");
+    printf("Digite o cpf do destinatario:\n");
     scanf("%ld", &CPF2);
     int pos2=buscarCliente(state,CPF2);
     if(pos2==-1 || pos2 == pos)
@@ -178,8 +179,7 @@ int transferencia(struct estadoPrograma*state){
         }
         state->memoria[pos].valor=totdeb;
         state->memoria[pos2].valor=valtrans;
-        printf("O valor da conta do receptor é R$%.2f",state->memoria[pos2].valor);
-        printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valtrans,state->memoria[pos].valor=totdeb);
+        printf("Depois do debito de R$%.2f, sua conta tem R$%.2f",valtrans,state->memoria[pos].valor=totdeb);
         adicionarExtrato(state, pos, TRANSFERENCIA, (valtrans*1.03) * -1, valtrans*0.03);
         adicionarExtrato(state, pos2, TRANSFERENCIA, valtrans, 0);
     }
@@ -208,7 +208,6 @@ void rearranjarArrayExtrato(struct conta *usuario){
 
 int adicionarExtrato(struct estadoPrograma *state, int posicaoCliente, enum TipoRegistro tipo, float valor, float tarifa){
     int qtdExtratoCliente = state->memoria[posicaoCliente].qtdMovimentacao;
-    printf("qtd de movimentacoes inicial: %d\n", qtdExtratoCliente);
     struct registroMovimentacao novoRegistro;
     novoRegistro.tipo = tipo;
     novoRegistro.valor = valor;
@@ -259,6 +258,42 @@ int lerExtrato(struct estadoPrograma *state, long cpf){
         printf("Valor: R$%.2f\n", state->memoria[pos].extrato[i].valor);
         printf("Tarifa: R$%.2f\n", state->memoria[pos].extrato[i].tarifa);
     }
+    return SUCESSO;
+}
+
+int salvar(struct estadoPrograma *state){
+    FILE *f = fopen("dados.bin", "wb");
+    if(f == NULL){
+        printf("ERRO:\n");
+        printf("Não foi possível abrir o arquivo dados.bin.\n");
+        return ERRO_ARQUIVO;
+    }
+    // salva o tamanho no binario
+    fwrite(&state->tamanho, sizeof(int), 1, f);
+    // salva a array de structs
+    for(int i = 0; i < state->tamanho; i++){
+        fwrite(&state->memoria[i], sizeof(struct conta), 1, f);
+    }
+    fclose(f);
+    printf("Arquivo atualizado com sucesso!\n");
+    return SUCESSO;
+}
+
+int carregar(struct estadoPrograma *ponteiroEstado){
+    FILE *f = fopen("dados.bin", "rb");
+    if(f == NULL){
+        printf("ERRO:\n");
+        printf("Nao foi posivel abrir o arquivo dados.bin");
+        return ERRO_ARQUIVO;
+    }
+    // carrega o tamanho
+    fread(&(ponteiroEstado->tamanho), sizeof(int), 1, f);
+    // carrega a array de contas
+    for(int i = 0; i < ponteiroEstado->tamanho; i++){
+        fread(&(ponteiroEstado->memoria[i]), sizeof(struct conta), 1, f);
+    }
+    printf("Contas carregadas com sucesso!\n");
+    fclose(f);
     return SUCESSO;
 }
 

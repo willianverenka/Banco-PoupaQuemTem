@@ -11,7 +11,8 @@ enum Respostas{
     ERRO_SENHA = -2,
     ERRO_LISTA_VAZIA = -3,
     ERRO_LISTA_CHEIA = -4,
-    OPERACAO_INVALIDA = -5 //debito/transferencias impossiveis
+    OPERACAO_INVALIDA = -5, //debito/transferencias impossiveis
+    ERRO_ARQUIVO = -6
 };
 
 enum TipoConta{
@@ -63,5 +64,8 @@ int deposito(struct estadoPrograma*state);
 int transferencia(struct estadoPrograma*state);
 int lerExtrato(struct estadoPrograma *state, long cpf);
 int adicionarExtrato(struct estadoPrograma *state, int posicaoCliente, enum TipoRegistro tipo, float valor, float tarifa);
+int carregar(struct estadoPrograma *ponteiroEstado);
+int salvar(struct estadoPrograma *state);
 void esperarSaida();
+
 #endif //PROJETO_2_BIBLIOTECA_H

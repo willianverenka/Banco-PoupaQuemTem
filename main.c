@@ -2,7 +2,21 @@
 #include "biblioteca.h"
 int main() {
     struct estadoPrograma state;
-    state.tamanho = 0;
+    FILE *f;
+    f = fopen("dados.bin", "rb");
+    if(f){
+        carregar(&state); //carrega os dados do estado do programa (array de tarefas, tamanho)
+        fclose(f);
+    }
+    else{
+        fclose(f);
+        f = fopen("dados.bin", "wb");
+        int t = 0;
+        fwrite(&t, sizeof(int), 1, f);
+        fclose(f);
+        state.tamanho = t;
+        printf("Arquivo nao encontrado!\ndados.bin foi criado com sucesso.\n");
+    }
     state.estadoLoop = FUNCIONANDO;
     do{
         printf("1. Novo cliente\n");
@@ -15,10 +29,11 @@ int main() {
         printf("0. Sair\n");
         char input;
         scanf(" %c", &input);
-        printf("tamanho eh %d\n", state.tamanho);
         while ((getchar()) != '\n');
         switch(input){
             case '0':
+                esperarSaida();
+                salvar(&state);
                 printf("SAINDO.\n");
                 state.estadoLoop = FECHADO;
                 break;
@@ -34,7 +49,6 @@ int main() {
                 long input2;
                 scanf("%ld", &input2);
                 while ((getchar()) != '\n');
-                printf("input eh %ld\n", input2);
                 while (deletarCliente(&state, input2) == -1){
                     printf("CPF invalido.\n");
                     printf("Digite o CPF do cliente a ser apagado:\n");
@@ -70,6 +84,7 @@ int main() {
                     printf("ERRO: CPF ou senha invalidos.\n");
                 }
                 while ((getchar()) != '\n');
+                esperarSaida();
                 break;
             case '6':
                 printf("Digite o CPF do cliente a ser consultado:\n");
