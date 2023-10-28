@@ -145,13 +145,13 @@ int deposito(struct estadoPrograma*state){
     printf("Digite o valor a ser depositado:\n");
     scanf("%f",&valdep);
     state->memoria[pos].valor=state->memoria[pos].valor+valdep;
-    printf("O novo valor da sua conta eh R$%.2f",state->memoria[pos].valor);
+    printf("O novo valor da sua conta eh R$%.2f\n",state->memoria[pos].valor);
     adicionarExtrato(state, pos, DEPOSITO, valdep, 0);
     return SUCESSO;
 }
 int transferencia(struct estadoPrograma*state){
     long CPF;
-    printf("Digite o cpf do cliente que irah transferir o dinheiro:\n");
+    printf("Digite o cpf da conta origem:\n");
     scanf("%ld", &CPF);
     int pos=buscarCliente(state,CPF);
     if (pos==-1){
@@ -170,7 +170,7 @@ int transferencia(struct estadoPrograma*state){
     if(pos2==-1 || pos2 == pos)
         return ERRO_CPF;
     float valtrans;
-    printf("Digite o valor a ser tranferido: \n");
+    printf("Digite o valor a ser transferido: \n");
     scanf("%f",&valtrans);
     if(state->memoria[pos].tipo==1){
         float totdeb=state->memoria[pos].valor-1.03*valtrans;
@@ -179,7 +179,7 @@ int transferencia(struct estadoPrograma*state){
         }
         state->memoria[pos].valor=totdeb;
         state->memoria[pos2].valor=valtrans;
-        printf("Depois do debito de R$%.2f, sua conta tem R$%.2f",valtrans,state->memoria[pos].valor=totdeb);
+        printf("Depois do debito de R$%.2f, sua conta tem R$%.2f\n",valtrans,state->memoria[pos].valor=totdeb);
         adicionarExtrato(state, pos, TRANSFERENCIA, (valtrans*1.03) * -1, valtrans*0.03);
         adicionarExtrato(state, pos2, TRANSFERENCIA, valtrans, 0);
     }
@@ -190,8 +190,7 @@ int transferencia(struct estadoPrograma*state){
         }
         state->memoria[pos].valor=totdeb;
         state->memoria[pos2].valor=valtrans;
-        printf("O valor da conta do receptor eh R$%.2f\n",state->memoria[pos2].valor);
-        printf("Depois do dehbito de R$%.2f, sua conta tem com R$%.2f",valtrans,state->memoria[pos].valor=totdeb);
+        printf("Depois do debito de R$%.2f, sua conta tem com R$%.2f\n",valtrans,state->memoria[pos].valor=totdeb);
         adicionarExtrato(state, pos, TRANSFERENCIA, (valtrans*1.05) * -1, valtrans*0.05);
         adicionarExtrato(state, pos2, TRANSFERENCIA, valtrans, 0);
         }
@@ -242,23 +241,40 @@ int lerExtrato(struct estadoPrograma *state, long cpf){
     int qtdExtrato = state->memoria[pos].qtdMovimentacao;
     if(qtdExtrato == 0)
         return ERRO_LISTA_VAZIA;
+    FILE *f;
+    char nomeArquivo[104];
+    strcpy(nomeArquivo, state->memoria[pos].nome);
+    strcat(nomeArquivo, ".txt");
+    f = fopen(nomeArquivo, "w");
     /* le o extrato do final pro inicio, ou seja, o mais recente primeiro*/
     for(int i = qtdExtrato-1, j = 1; i >= 0; i--, j++){
         printf("\n%d.\n", j);
         switch(state->memoria[pos].extrato[i].tipo){
             case DEBITO:
                 printf("Tipo: Debito\n");
+                fwrite("Movimentação: Débito\n", sizeof(char), strlen("Movimentação: Débito\n"), f);
                 break;
             case TRANSFERENCIA:
                 printf("Tipo: Transferencia\n");
+                fwrite("Movimentação: Transferência\n", sizeof(char), strlen("Movimentação: Transferência\n"), f);
                 break;
             default:
                 printf("Tipo: Deposito\n");
+                fwrite("Movimentação: Deposito\n", sizeof(char), strlen("Movimentação: Deposito\n"), f);
                 break;
         }
+        char valor[300];
+        sprintf(valor, "Valor: %.2f\n", state->memoria[pos].extrato[i].valor);
+        fwrite(valor, sizeof(char), strlen(valor), f);
+        char tarifa[300];
+        sprintf(tarifa, "Tarifa: %.2f\n", state->memoria[pos].extrato[i].tarifa);
+        fwrite(tarifa, sizeof(char), strlen(tarifa), f);
         printf("Valor: R$%.2f\n", state->memoria[pos].extrato[i].valor);
         printf("Tarifa: R$%.2f\n", state->memoria[pos].extrato[i].tarifa);
+        fwrite("\n", sizeof(char), 1, f);
     }
+    fclose(f);
+    printf("Um arquivo %s foi criado contendo o extrato do usuario.\nSera possivel consulta-lo uma vez que o programa seja interrompido pelo menu (0. Sair)\n", nomeArquivo);
     return SUCESSO;
 }
 
