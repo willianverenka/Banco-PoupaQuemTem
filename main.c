@@ -101,6 +101,9 @@ int main() {
                     case OPERACAO_INVALIDA:
                         printf("ERRO: Operacao invalida.\n");
                         break;
+                    case ERRO_LISTA_VAZIA:
+                        printf("Nenhuma movimentacao foi registrada para esta conta.\n");
+                        break;
                 }
                     while ((getchar()) != '\n');
                     esperarSaida();
@@ -119,6 +122,7 @@ int main() {
                     break;
                 default:
                     printf("Insira uma entrada valida (0-7)\n");
+                    esperarSaida();
                     break;
             }
     }while(state.estadoLoop == FUNCIONANDO);

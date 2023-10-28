@@ -83,7 +83,7 @@ int deletarCliente(struct estadoPrograma *state, long cpf){
     if(posicao == -1){
         return ERRO_CPF;
     }
-    if(posicao == state->tamanho-1){
+    if(posicao == state->tamanho-1){ //se o item deletado for o ultimo da lista, entao nao é necessario reordenar
         state->tamanho--;
     }
     else{
@@ -198,7 +198,7 @@ int transferencia(struct estadoPrograma*state){
     return SUCESSO;
 }
 
-void rearranjarArrayExtrato(struct conta *usuario){
+void rearranjarArrayExtrato(struct conta *usuario){ //utilitario pra reordenar array [i] = [i-1]
     if(usuario->qtdMovimentacao == 0)
         return;
     for(int i = usuario->qtdMovimentacao-1; i > 0; i--){
@@ -242,6 +242,7 @@ int lerExtrato(struct estadoPrograma *state, long cpf){
     int qtdExtrato = state->memoria[pos].qtdMovimentacao;
     if(qtdExtrato == 0)
         return ERRO_LISTA_VAZIA;
+    /* le o extrato do final pro inicio, ou seja, o mais recente primeiro*/
     for(int i = qtdExtrato-1, j = 1; i >= 0; i--, j++){
         printf("\n%d.\n", j);
         switch(state->memoria[pos].extrato[i].tipo){
@@ -297,7 +298,7 @@ int carregar(struct estadoPrograma *ponteiroEstado){
     return SUCESSO;
 }
 
-void esperarSaida(){
+void esperarSaida(){ // pausa o fluxo para melhorar a legibilidade dos menus
     printf("Pressione qualquer tecla para sair...");
     getchar();
 }
