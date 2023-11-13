@@ -2,20 +2,11 @@
 #include "biblioteca.h"
 int main() {
     struct estadoPrograma state;
-    FILE *f;
-    f = fopen("dados.bin", "rb");
-    if(f){
-        carregar(&state); //carrega os dados do estado do programa (array de tarefas, tamanho)
-        fclose(f);
-    }
-    else{
-        fclose(f);
-        f = fopen("dados.bin", "wb");
-        int t = 0;
-        fwrite(&t, sizeof(int), 1, f);
-        fclose(f);
-        state.tamanho = t;
-        printf("Arquivo nao encontrado!\ndados.bin foi criado com sucesso.\n");
+    if(carregar(&state) == SUCESSO){
+        printf("Arquivo carregado com sucesso.\n");
+    }else{
+        printf("Arquivo nao encontrado.\n");
+        printf("Criando novo arquivo.\n");
     }
     state.estadoLoop = FUNCIONANDO;
     do{
