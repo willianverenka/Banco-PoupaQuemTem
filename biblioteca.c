@@ -298,18 +298,14 @@ int salvar(struct estadoPrograma *state){
 
 int carregar(struct estadoPrograma *ponteiroEstado){
     FILE *f = fopen("dados.bin", "rb");
-    if(f == NULL){
-        printf("ERRO:\n");
-        printf("Nao foi posivel abrir o arquivo dados.bin");
+    if(f == NULL)
         return ERRO_ARQUIVO;
-    }
     // carrega o tamanho
     fread(&(ponteiroEstado->tamanho), sizeof(int), 1, f);
     // carrega a array de contas
     for(int i = 0; i < ponteiroEstado->tamanho; i++){
         fread(&(ponteiroEstado->memoria[i]), sizeof(struct conta), 1, f);
     }
-    printf("Contas carregadas com sucesso!\n");
     fclose(f);
     return SUCESSO;
 }
